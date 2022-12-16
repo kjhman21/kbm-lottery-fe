@@ -138,7 +138,13 @@ const Page1 = () => {
 
     try {
       const input = caver.abi.encodeFunctionCall( {
-        "inputs": [],
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "round",
+            "type": "uint256"
+          }
+        ],
         "name": "getSubmitters",
         "outputs": [
           {
@@ -149,7 +155,7 @@ const Page1 = () => {
         ],
         "stateMutability": "view",
         "type": "function"
-      },[]);
+      },[round]);
       const to = process.env.REACT_APP_LOTTERY_CONTRACT_ADDRESS;
       const r = await caver.rpc.klay.call({
         from: to,
