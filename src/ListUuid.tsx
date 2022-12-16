@@ -55,7 +55,7 @@ const Page1 = () => {
         </thead>
         <tbody>
           {uuids && uuids.map((x,i)=>{
-            const mintLink = `${process.env.REACT_APP_FE_URL}/mint?uuid=${uuids[0]}`
+            const mintLink = `${process.env.REACT_APP_FE_URL}/mint?uuid=${x}`
             const kaikasMintLink =`kaikas://wallet/browser?url=${mintLink}` 
             const submitRandomLink= `${process.env.REACT_APP_FE_URL}/submit`;
             const kaikasSubmitRandomLink =`kaikas://wallet/browser?url=${submitRandomLink}` 
