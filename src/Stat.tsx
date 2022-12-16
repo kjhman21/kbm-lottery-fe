@@ -18,17 +18,6 @@ const Page1 = () => {
   const [numNFTOwners, setNumNFTOwners] = useState<number>(0);
   const [roundInfo, setRoundInfo] = useState<roundInfo[]>([]);
 
-  const loadWallet = async () => {
-    if(mobile() && window.klaytn === undefined) {
-      window.location.href = `kaikas://wallet/browser?url=${encodeURIComponent(window.location.href)}`;
-    } else {
-      var klaytn = window.klaytn;
-      if(klaytn) {
-        await klaytn.enable();
-      }
-    }
-  }
-
   const loadNumNFTOwners = async () => {
     var caver = new Caver(window.klaytn);
 
@@ -204,6 +193,7 @@ const Page1 = () => {
         to, input,
         gas:'10000000',
       })
+      console.log('round value', r)
 
       rnd = parseInt(caver.utils.toBN(r).mod(caver.utils.toBN(numNFTOwners)).toString())
 
