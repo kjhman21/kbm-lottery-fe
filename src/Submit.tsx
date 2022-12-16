@@ -46,10 +46,7 @@ const Page1 = () => {
       setRound(caver.utils.hexToNumber(r));
       
     } catch(e) {
-      if(axios.isAxiosError(e)) {
-        var axiosError = e as {response:{data:{error:any}}};
-        setResultMessage(""+axiosError.response.data.error);
-      }
+      setResultMessage(parseError(e))
       console.log(e);
     }
   }
@@ -103,7 +100,7 @@ const Page1 = () => {
   return (
     <Container>
       <h1>한국 블록체인 밋업 난수 제출</h1>
-      {klaytnAddress !== "" &&
+      {klaytnAddress !== "" ?
         <div>
           <h1>클레이튼 주소: {klaytnAddress} <a href={`${process.env.REACT_APP_SCOPE_URL}/account/${klaytnAddress}`} target='_blank'>Scope</a>, <a href={`${process.env.REACT_APP_FINDER_URL}/account/${klaytnAddress}`} target='_blank'>Finder</a></h1>
           <h1>라운드: {round}</h1>
@@ -116,7 +113,7 @@ const Page1 = () => {
           <h1 style={{color:'red'}}>{resultMessage}</h1>
           <ButtonLink to="" disabled={submitting} onClick={()=>submit()}>제출{submitting && <>&nbsp;<Spinner animation="border" size='sm' /></>}</ButtonLink>
         </div>
-      }
+      :<h1>카이카스 로그인이 필요합니다.</h1>}
     </Container>
   );
 }

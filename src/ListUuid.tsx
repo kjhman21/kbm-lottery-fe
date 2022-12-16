@@ -48,9 +48,10 @@ const Page1 = () => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <td style={{textAlign:"center"}} width="10%">ID</td>
-            <td style={{textAlign:"center"}} width="45%">QR for Mint</td>
-            <td style={{textAlign:"center"}} width="45%">QR for Random Submission</td>
+            <td style={{textAlign:"center"}}>ID</td>
+            <td style={{textAlign:"center"}} >QR for Mint</td>
+            <td style={{textAlign:"center"}} >QR for Random Submission</td>
+            <td style={{textAlign:"center"}} >QR for Stat</td>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +60,8 @@ const Page1 = () => {
             const kaikasMintLink =`kaikas://wallet/browser?url=${mintLink}` 
             const submitRandomLink= `${process.env.REACT_APP_FE_URL}/submit`;
             const kaikasSubmitRandomLink =`kaikas://wallet/browser?url=${submitRandomLink}` 
+            const statLink= `${process.env.REACT_APP_FE_URL}`;
+            const kaikasStatLink=`kaikas://wallet/browser?url=${statLink}` 
           return <tr key={`qr-${i}`}>
             <td style={{textAlign:'center'}}>{i}</td>
             <td style={{textAlign:'center'}}>
@@ -73,7 +76,13 @@ const Page1 = () => {
               <QRCode size={100} value={kaikasSubmitRandomLink}/><br/>
               <a href={submitRandomLink}>{submitRandomLink}</a></div>
             </td>
-            </tr>})}
+            <td style={{textAlign:'center'}}>
+              아래 QR코드를 스캔하여 통계페이지를 확인하세요.
+              <div style={{height:'auto', padding:'16px', width:'100%'}}>
+              <QRCode size={100} value={kaikasStatLink}/><br/>
+              <a href={statLink}>{statLink}</a></div>
+            </td>
+          </tr>})}
         </tbody>
       </Table>
       {errorMessage !== "" &&

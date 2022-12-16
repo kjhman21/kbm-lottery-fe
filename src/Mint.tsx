@@ -59,14 +59,14 @@ const Page1 = () => {
   return (
     <Container>
       <h1>한국 블록체인 밋업 NFT Airdrop</h1>
-      {klaytnAddress !== "" &&
+      {klaytnAddress !== "" ?
         <div>
           <h1>클레이튼 주소: {klaytnAddress} <a href={`${process.env.REACT_APP_SCOPE_URL}/account/${klaytnAddress}`} target='_blank'>Scope</a>, <a href={`${process.env.REACT_APP_FINDER_URL}/account/${klaytnAddress}`} target='_blank'>Finder</a></h1>
           <h1>UUID: {uuid}</h1>
           <h1 style={{color:'red'}}>{mintedMessage}</h1>
           <ButtonLink to="" disabled={uuid===undefined || minting} onClick={()=>mint()}>Mint{minting && <>&nbsp;<Spinner animation="border" size='sm' /></>}</ButtonLink>
         </div>
-      }
+      :<h1>카이카스 로그인이 필요합니다.</h1>}
     </Container>
   );
 }

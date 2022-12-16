@@ -81,10 +81,7 @@ const Page1 = () => {
       setRound(caver.utils.hexToNumber(r));
       
     } catch(e) {
-      if(axios.isAxiosError(e)) {
-        var axiosError = e as {response:{data:{error:any}}};
-        setResultMessage(""+axiosError.response.data.error);
-      }
+      setResultMessage(parseError(e))
       console.log(e);
     }
   }
@@ -116,10 +113,7 @@ const Page1 = () => {
       setSubmittable(caver.utils.hexToNumber(r) !== 0);
       
     } catch(e) {
-      if(axios.isAxiosError(e)) {
-        var axiosError = e as {response:{data:{error:any}}};
-        setResultMessage(""+axiosError.response.data.error);
-      }
+      setResultMessage(parseError(e))
       console.log(e);
     }
   }
@@ -187,10 +181,7 @@ const Page1 = () => {
       setSubmitting(false);
 
     } catch(e) {
-      if(axios.isAxiosError(e)) {
-        var axiosError = e as {response:{data:{error:any}}};
-        setResultMessage(""+axiosError.response.data.error);
-      }
+      setResultMessage(parseError(e));
       console.log(e);
     }
     setStartNewRoundInProgress(false);
