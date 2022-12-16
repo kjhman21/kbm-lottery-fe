@@ -260,7 +260,10 @@ const Page1 = () => {
     <Container>
       <h1>한국 블록체인 밋업 난수 제출 - 통계</h1>
       <div>
+        {klaytnAddress !== "" ?
         <h1>클레이튼 주소: {klaytnAddress} <a href={`${process.env.REACT_APP_SCOPE_URL}/account/${klaytnAddress}`} target='_blank'>Scope</a>, <a href={`${process.env.REACT_APP_FINDER_URL}/account/${klaytnAddress}`} target='_blank'>Finder</a></h1>
+        :<h1>카이카스 로그인이 필요합니다. 로그인하시면 본인 계정의 경우 빨간색으로 표기됩니다.</h1>
+        }
         <h1>라운드: {round}</h1>
         <h1>제출자: {submitters}</h1>
         <h1>submittable: {submittable?"true":"false"}</h1>
