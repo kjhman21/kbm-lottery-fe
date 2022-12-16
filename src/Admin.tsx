@@ -7,6 +7,7 @@ import Caver from 'caver-js';
 import axios from 'axios';
 import { KlaytnAddressContext } from './KlaytnAddressContext';
 import { parseError } from './util';
+import { Form } from 'react-bootstrap';
 
 const Page1 = () => {
   const klaytnAddress = useContext(KlaytnAddressContext);
@@ -19,6 +20,8 @@ const Page1 = () => {
   const [numNFTOwners, setNumNFTOwners] = useState<number>(0);
   const [startNewRoundInProgress, setStartNewRoundInProgress] = useState<boolean>(false);
   const [stopRoundInProgress, setStopRoundInProgress] = useState<boolean>(false);
+  const [number, setNumber] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const loadNumNFTOwners = async () => {
     var caver = new Caver(window.klaytn);
@@ -47,10 +50,7 @@ const Page1 = () => {
       setNumNFTOwners(caver.utils.hexToNumber(r));
       
     } catch(e) {
-      if(axios.isAxiosError(e)) {
-        var axiosError = e as {response:{data:{error:any}}};
-        setResultMessage(""+axiosError.response.data.error);
-      }
+      setErrorMessage(parseError(e));
       console.log(e);
     }
   }
@@ -129,7 +129,13 @@ const Page1 = () => {
 
     try {
       const input = caver.abi.encodeFunctionCall( {
-        "inputs": [],
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "round",
+            "type": "uint256"
+          }
+        ],
         "name": "getSubmitters",
         "outputs": [
           {
@@ -140,7 +146,7 @@ const Page1 = () => {
         ],
         "stateMutability": "view",
         "type": "function"
-      },[]);
+      },[round]);
       const to = process.env.REACT_APP_LOTTERY_CONTRACT_ADDRESS;
       const r = await caver.rpc.klay.call({
         from: to,
@@ -152,10 +158,7 @@ const Page1 = () => {
       setSubmitters(s.length);
       
     } catch(e) {
-      if(axios.isAxiosError(e)) {
-        var axiosError = e as {response:{data:{error:any}}};
-        setResultMessage(""+axiosError.response.data.error);
-      }
+      setResultMessage(parseError(e));
       console.log(e);
     }
   }
@@ -223,6 +226,10 @@ const Page1 = () => {
     setStopRoundInProgress(false);
   }
 
+  const onNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNumber(e.currentTarget.value);
+  }
+
   useEffect(() => {
     loadRound();
     loadSubmitters();
@@ -230,6 +237,37 @@ const Page1 = () => {
     loadNumNFTOwners();
   },[])
 
+  const submit = async () => {
+    var caver = new Caver(window.klaytn);
+
+    setSubmitting(true);
+    const message = 'create_uuid';
+    const timestamp = new Date().getTime();
+    var signature = await caver.klay.sign(message+timestamp, klaytnAddress);
+    var num = number;
+
+    try {
+      const r = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/admin/uuid`, {
+        num,
+        klaytnAddress,
+        signature,
+        message,
+        timestamp
+      },{
+        headers: {
+          'Content-Type':'application/json',
+          'Accept':'application/json',
+        }
+      })
+      
+      setErrorMessage("UUID 생성 완료.");
+
+    } catch(e) {
+      setErrorMessage(parseError(e))
+      console.log(e);
+    }
+    setSubmitting(false);
+  }
 
   return (
     <Container>
@@ -243,8 +281,18 @@ const Page1 = () => {
           <h1>NFT Total Supply: {numNFTOwners}</h1>
           <h1 style={{color:'red'}}>{resultMessage}</h1>
           {randomNumber !== undefined && <h1>토큰 ID: {randomNumber}</h1>}
-          <ButtonLink to="" disabled={startNewRoundInProgress} onClick={()=>startNewRound()}>새 라운드 시작{submitting && <>&nbsp;<Spinner animation="border" size='sm' /></>}</ButtonLink>
-          <ButtonLink to="" disabled={stopRoundInProgress} onClick={()=>stopRound()}>라운드 종료{submitting && <>&nbsp;<Spinner animation="border" size='sm' /></>}</ButtonLink>
+          <ButtonLink to="" disabled={startNewRoundInProgress} onClick={()=>startNewRound()}>새 라운드 시작{startNewRoundInProgress && <>&nbsp;<Spinner animation="border" size='sm' /></>}</ButtonLink><br/>
+          <ButtonLink to="" disabled={stopRoundInProgress} onClick={()=>stopRound()}>라운드 종료{stopRoundInProgress && <>&nbsp;<Spinner animation="border" size='sm' /></>}</ButtonLink><br/>
+          <Form>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>UUID 생성</Form.Label>
+              <Form.Control onChange={onNumberChange} type="text" placeholder="생성할 uuid 개수를 입력하세요." />
+            </Form.Group>
+          </Form>
+          <ButtonLink to="" disabled={submitting} onClick={()=>submit()}>제출{submitting && <>&nbsp;<Spinner animation="border" size='sm' /></>}</ButtonLink>
+          {errorMessage !== "" &&
+            <h1 style={{color:'red'}}>{errorMessage}</h1>
+          }
         </div>
       }
     </Container>

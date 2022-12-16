@@ -1,10 +1,11 @@
 import { useContext, useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import ButtonLink from './ButtonLink';
-import Caver from 'caver-js';
+import ButtonLink from './ButtonLink'; import Caver from 'caver-js';
 import axios from 'axios';
 import QRCode from 'react-qr-code';
 import { KlaytnAddressContext } from './KlaytnAddressContext';
+import { parseError } from './util';
+import { Table } from 'react-bootstrap';
 
 const Page1 = () => {
   const klaytnAddress = useContext(KlaytnAddressContext);
@@ -34,10 +35,7 @@ const Page1 = () => {
       console.log('r', r.data)
 
     } catch(e) {
-      if(axios.isAxiosError(e)) {
-        var axiosError = e as {response:{data:{error:string}}};
-        setErrorMessage(""+axiosError.response.data.error);
-      }
+      setErrorMessage(parseError(e));
       console.log(e);
     }
   }
@@ -47,13 +45,37 @@ const Page1 = () => {
       <h1>List UUID - Admin</h1>
       <h1>addr: {klaytnAddress}</h1>
       {klaytnAddress !== "" && <ButtonLink to="#" onClick={()=>listUuid()}>List uuid</ButtonLink>}
-      {uuids && uuids.map((x,i)=>{
-        const link = `${process.env.REACT_APP_FE_URL}/mint?uuid=${uuids[0]}`
-        const kaikasLink =`kaikas://wallet/browser?url=${link}` 
-      return <div key={`qr-${i}`} style={{height:'auto', background:'white', padding:'16px', width:'100%'}}>
-        <QRCode size={100} value={kaikasLink}/><br/>
-        <a href={link}>{link}</a>
-      </div>})}
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <td style={{textAlign:"center"}} width="10%">ID</td>
+            <td style={{textAlign:"center"}} width="45%">QR for Mint</td>
+            <td style={{textAlign:"center"}} width="45%">QR for Random Submission</td>
+          </tr>
+        </thead>
+        <tbody>
+          {uuids && uuids.map((x,i)=>{
+            const mintLink = `${process.env.REACT_APP_FE_URL}/mint?uuid=${uuids[0]}`
+            const kaikasMintLink =`kaikas://wallet/browser?url=${mintLink}` 
+            const submitRandomLink= `${process.env.REACT_APP_FE_URL}/submit`;
+            const kaikasSubmitRandomLink =`kaikas://wallet/browser?url=${submitRandomLink}` 
+          return <tr key={`qr-${i}`}>
+            <td style={{textAlign:'center'}}>{i}</td>
+            <td style={{textAlign:'center'}}>
+              아래 QR코드를 스캔하여 NFT를 민팅하세요.
+              <div style={{height:'auto', padding:'16px', width:'100%'}}>
+              <QRCode size={100} value={kaikasMintLink}/><br/>
+              <a href={mintLink}>{mintLink}</a></div>
+            </td>
+            <td style={{textAlign:'center'}}>
+              아래 QR코드를 스캔하여 랜덤값을 제출하세요.
+              <div style={{height:'auto', padding:'16px', width:'100%'}}>
+              <QRCode size={100} value={kaikasSubmitRandomLink}/><br/>
+              <a href={submitRandomLink}>{submitRandomLink}</a></div>
+            </td>
+            </tr>})}
+        </tbody>
+      </Table>
       {errorMessage !== "" &&
         <h1 style={{color:'red'}}>{errorMessage}</h1>
       }

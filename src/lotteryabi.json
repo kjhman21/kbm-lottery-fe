@@ -146,7 +146,13 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "round",
+				"type": "uint256"
+			}
+		],
 		"name": "getSubmitters",
 		"outputs": [
 			{
