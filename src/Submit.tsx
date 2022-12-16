@@ -10,6 +10,7 @@ import queryString from 'query-string';
 import { Form } from 'react-bootstrap';
 import lotteryabi from './lotteryabi.json';
 import { KlaytnAddressContext } from './KlaytnAddressContext';
+import { parseError } from './util';
 
 const Page1 = () => {
   const klaytnAddress = useContext(KlaytnAddressContext);
@@ -55,6 +56,7 @@ const Page1 = () => {
 
   const submit = async () => {
     var caver = new Caver(window.klaytn);
+    setSubmitting(true);
     try {
       // calling submit Random
       const input = caver.abi.encodeFunctionCall({
@@ -82,12 +84,10 @@ const Page1 = () => {
       setSubmitting(false);
       
     } catch(e) {
-      if(axios.isAxiosError(e)) {
-        var axiosError = e as {response:{data:{error:any}}};
-        setResultMessage(""+axiosError.response.data.error);
-      }
+      setResultMessage(parseError(e));
       console.log(e);
     }
+    setSubmitting(false);
   }
 
   const onNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
