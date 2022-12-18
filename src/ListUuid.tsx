@@ -49,6 +49,7 @@ const Page1 = () => {
         <thead>
           <tr>
             <td style={{textAlign:"center"}}>ID</td>
+            <td style={{textAlign:"center"}}>Kaikas Install</td>
             <td style={{textAlign:"center"}} >QR for Mint</td>
             <td style={{textAlign:"center"}} >QR for Random Submission</td>
             <td style={{textAlign:"center"}} >QR for Stat</td>
@@ -56,6 +57,7 @@ const Page1 = () => {
         </thead>
         <tbody>
           {uuids && uuids.map((x,i)=>{
+            const kaikasInstallLink = 'https://play.google.com/store/apps/details?id=io.klutch.wallet&hl=en&gl=US'
             const mintLink = `${process.env.REACT_APP_FE_URL}/mint?uuid=${x}`
             const kaikasMintLink =`kaikas://wallet/browser?url=${mintLink}` 
             const submitRandomLink= `${process.env.REACT_APP_FE_URL}/submit`;
@@ -64,6 +66,12 @@ const Page1 = () => {
             const kaikasStatLink=`kaikas://wallet/browser?url=${statLink}` 
           return <tr key={`qr-${i}`}>
             <td style={{textAlign:'center'}}>{i}</td>
+            <td style={{textAlign:'center'}}>
+              아래 QR코드를 스캔하여 Kaikas를 설치하세요.
+              <div style={{height:'auto', padding:'16px', width:'100%'}}>
+              <QRCode size={100} value={kaikasInstallLink}/><br/>
+              <a href={kaikasInstallLink}>{kaikasInstallLink}</a></div>
+            </td>
             <td style={{textAlign:'center'}}>
               아래 QR코드를 스캔하여 NFT를 민팅하세요.
               <div style={{height:'auto', padding:'16px', width:'100%'}}>
